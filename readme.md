@@ -12,18 +12,20 @@ If you find a bug, or have any kind of suggestion, please report in or send a pu
 
 ## Usage
 
-TPC is a header only library. It uses some features of the C++ 17 language standard, therefore you will need a compatible compiler to use TPC. In fact, both clang and gcc are currently able to compile TPC without any extra setup. Just add the `tpc` directory to the include path, set -std=c++1z, _#include_ the modules you want to use and you're ready to go.
+TPC is a header only library. It uses some features of the C++ 17 language standard, therefore you will need a compatible compiler to use TPC. In fact, both clang and gcc are currently able to compile TPC without any extra setup. Just add the `tpc` directory to the include path, set `-std=c++1z`, _#include_ the modules you want to use and you're ready to go.
 
-For more detailed information on how to use TPC, see [Basic tutorial](#Basic-tutorial) and [Examples](#Examples).
+For more detailed information on how to use TPC, see [Basic tutorial](#basic-tutorial) and [Examples](#examples).
 
-For more technical information on compiling with TPC, see [Technical information](#Technical-Information).
+For more technical information on compiling with TPC, see [Technical information](#technical-Information).
 
 
 ## Basic tutorial
 
 ### The parser type
 
-The type of a parser for a type `T` is `tpc::parser<T>`. That type is equivalent to the type `tpc::result<T> (&)(tpc::stream&)`. `T` mustn't be a cv-qualified nor a reference type.
+The type of a parser for a type `T` is `tpc::parser<T>`.
+That type is equivalent to the type `tpc::result<T> (&)(tpc::stream&)`.
+`T` mustn't be a cv-qualified nor a reference type.
 
 ### The result type
 
@@ -36,7 +38,7 @@ The result type indicates either failure or success. It contains three relevant 
 
 The result type is projected to behave like a `std::optional<T>`. It has `operator bool()`, `operator ->()` and `operator *()`, so the usage is similar to `std::optional<T>`.
 
-Examples on using `tpc::result<T>` can be found at [Inspecting the result](#Inspecting-the-result).
+Examples on using `tpc::result<T>` can be found at [Inspecting the result](#inspecting-the-result).
 
 More details on members and methods of the `tpc::result<T>` type can be found at its documentation, [result.hpp](parser/result.hpp).
 
@@ -50,15 +52,15 @@ A parser might be declared in two ways, considering it is a reference to a funct
 * A function of type `tpc::result<T> (tpc::stream&)`
 * A constexpr `tpc::parser<T>` value.
 
-Examples of how to declare a parser can be found at [Declaring a parser](#Declaring-a-parser-2).
+Examples of how to declare a parser can be found at [Declaring a parser](#declaring-a-parser-2).
 
 ### Applying a parser
 
-To apply a parser, just do the function call supplying the stream of characters. The resulting value or parse error is the value returned by the function call. Examples of how to use a parser can be found at [Applying a parser](#Applying-a-parser-2).
+To apply a parser, just do the function call supplying the stream of characters. The resulting value or parse error is the value returned by the function call. Examples of how to use a parser can be found at [Applying a parser](#applying-a-parser-2).
 
 ### Modules
 
-TPC is organized into modules. That means one can _#include_ just what is needed, without having to _#include_ the whole library. The parser combinators can be found under `tpc/parser/combinators`. The standard parsers can be found under `tpc/parser/standard`. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`. For more detailed information on modules, see [Modules](#Modules).
+TPC is organized into modules. That means one can _#include_ just what is needed, without having to _#include_ the whole library. The parser combinators can be found under `tpc/parser/combinators`. The standard parsers can be found under `tpc/parser/standard`. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`. For more detailed information on modules, see [Modules](#modules).
 
 
 ## Examples
