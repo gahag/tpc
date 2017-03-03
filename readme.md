@@ -3,7 +3,7 @@
 
 ## Synopsis
 
-TPC is a parser combinator that uses c++ templates to combine and generate parsers at compile time. TPC is inspired by [Parsec](https://github.com/aslatter/parsec).
+TPC is a parser combinator that uses c++ templates to combine and generate parsers at compile time. It intends to be uncomplicated, easy to use and fast. TPC is inspired by [Parsec](https://github.com/aslatter/parsec).
 
 TPC is still in an early development stage, thus it might have some bugs or missing features. It also might face big changes. Backwards compatibility is not guaranteed.
 
