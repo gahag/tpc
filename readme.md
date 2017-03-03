@@ -23,8 +23,8 @@ For more technical information on compiling with TPC, see [Technical information
 
 ### The parser type
 
-The type of a parser for a type `T` is `tpc::parser<T>`.
-That type is equivalent to the type `tpc::result<T> (&)(tpc::stream&)`.
+The type of a parser for a type `T` is `tpc::parser<T>`.  
+That type is equivalent to the type `tpc::result<T> (&)(tpc::stream&)`.  
 `T` mustn't be a cv-qualified nor a reference type.
 
 ### The result type
@@ -32,11 +32,12 @@ That type is equivalent to the type `tpc::result<T> (&)(tpc::stream&)`.
 The type `tpc::result<T>` represents the result of a parser for a value of type `T`. `T` mustn't be a cv-qualified nor a reference type. 
 
 The result type indicates either failure or success. It contains three relevant members:
-* `value`: A `std::optional<T>` that contains the value parsed if the parser succeeded.
-* `pos`: The `tpc::position` where the parser stopped.
-* `checkpoint`: The `std::streampos` where the last succeeded parser stopped. If the parser that generated the result succeeded, it indicates the position where that parser stopped.
+* `value` : A `std::optional<T>` that contains the value parsed if the parser succeeded.
+* `pos` : The `tpc::position` where the parser stopped.
+* `checkpoint` : The `std::streampos` where the last succeeded parser stopped. If the parser that generated the result succeeded, it indicates the position where that parser stopped.
 
-The result type is projected to behave like a `std::optional<T>`. It has `operator bool()`, `operator ->()` and `operator *()`, so the usage is similar to `std::optional<T>`.
+The result type is projected to behave like a `std::optional<T>`.  
+It has `operator bool()`, `operator ->()` and `operator *()`, so the usage is similar to `std::optional<T>`.
 
 Examples on using `tpc::result<T>` can be found at [Inspecting the result](#inspecting-the-result).
 
