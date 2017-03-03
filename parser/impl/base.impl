@@ -1,0 +1,81 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <string>
+#include <ios>
+
+
+namespace tpc {
+  // dump: Reads the stream until the end.
+  inline std::string dump(stream& stream) {
+    return std::string(streamIt(stream), streamIt());
+  }
+  
+  // read: Reads the stream from the streampos parameter,
+  // `count` characters.
+  inline std::string read(stream& stream, std::streampos from, std::size_t count) {
+    auto init = stream.tellg();
+    
+    std::string str;
+    str.resize(count);
+    
+    stream.seekg(from);
+    if (stream.fail())
+      throw new std::ios_base::failure("TPC: stream does not support seeking");
+    
+    // TODO: replace `&str[0]` with `str.data` when c++17 is available.
+    stream.read(&str[0], count); // c++0x guarantees that strings have contiguous storage.
+    
+    stream.seekg(init);
+    
+    return str;
+  }
+  
+  
+  // fail: Parser that always fails.
+  // In other words, fail always returns a result<T> indicating failure.
+  template<typename T>
+  constexpr inline result<T> fail([[gnu::unused]] stream& _) {
+    return result<T>();
+  }
+  
+  // succeed: Parser that always succeeds based on a value.
+  // In other words, success returns a result<T> indicating success,
+  // containing `value`.
+  template<typename T, T value>
+  constexpr inline result<T> succeed([[gnu::unused]] stream& _) {
+    return result<T>(value);
+  }
+  
+  // succeed: Parser that always succeeds based on a generator.
+  // In other words, success returns a result<T> indicating success,
+  // containing the result of the calling the function `gen`.
+  template<typename T, T (&gen)()>
+  constexpr inline result<T> succeed([[gnu::unused]] stream& _) {
+    return result<T>(gen());
+  }
+  
+  
+  // illformed: Reads the stream between the last point where a parser
+  // succeeded (indicated by result parameter), and the last position
+  // read in the stream.
+  // The result parameter should be a result indicating failure, although
+  // no check is made to ensure.
+  template<typename T>
+  inline std::string illformed(const result<T>& error, stream& stream) {
+    return read(stream, error.checkpoint, stream.tellg() - error.checkpoint);
+  }
+  // Example:
+  // 
+  // std::stringstream stream("foobar\n"); // Alpha char identifier with 6 chars.
+  // 
+  // auto r = tpc::expect< std::size_t, 5, // Parses alpha char identifier with 5 chars.
+  //                       tpc::map<std::string, tpc::identifier<tpc::Char::isAlpha>,
+  //                                std::size_t, &std::string::size                  >
+  //                       >(stream);
+  // 
+  // auto str = tpc::illformed(r, stream); // str == "foobar"
+}

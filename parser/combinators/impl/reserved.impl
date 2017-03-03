@@ -1,0 +1,61 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/util/string.hpp>
+
+#include <tpc/parser/combinators/replace.hpp>
+#include <tpc/parser/standard/char.hpp>
+
+
+namespace tpc {
+  template<
+    const char* keyword,
+    bool (&compare)(char, char)
+  >
+  result<void_t> skipReserved(stream& stream) {
+    const char* kw = keyword;
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing && *kw) {
+      auto c = any(stream).from(p);
+      
+      parsing = bool(c) && compare(*kw, *c); // parsing will only be false if EOS is
+                                             // reached or the comparison fails.
+      p = c.pos;
+      if (parsing)
+        chk = c.checkpoint;
+      
+      kw++;
+    }
+    
+    return *kw || !parsing ? result<void_t>::fail(p, chk)
+                           : result<void_t>(Util::Functional::unit, p, chk);
+  }
+  
+  template<const char* keyword>
+  inline result<void_t> skipReserved(stream& stream) {
+    return skipReserved<keyword, Util::Char::equals>(stream);
+  }
+  
+  
+  template<
+    const char* keyword,
+    bool (&compare)(char, char)
+  >
+  inline result<std::string> reserved(stream& stream) {
+    return replace<
+      void_t,      skipReserved,
+      std::string, Util::String::to_string<keyword>
+    >(stream);
+  }
+  
+  template<const char* keyword>
+  inline result<std::string> reserved(stream& stream) {
+    return reserved<keyword, Util::Char::equals>(stream);
+  }
+}

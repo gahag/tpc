@@ -1,0 +1,26 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/util/traits.hpp>
+
+namespace tpc::Traits {
+  template<typename Container>
+  struct has_push_back {
+  private:
+    template<typename C = Container>  // Template alias to enable SFINAE
+    constexpr static auto has(void*) -> decltype(
+      std::declval<C>().push_back(std::declval< value_type<C> >()),
+      bool()
+    ) {
+      return true;
+    }
+    
+    constexpr static bool has(...) { return false; }
+    
+  public:
+    constexpr static bool value = has(nullptr);
+  };
+}

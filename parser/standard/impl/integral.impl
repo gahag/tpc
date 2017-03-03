@@ -1,0 +1,50 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/parser/combinators/try.hpp>
+#include <tpc/parser/standard/digit.hpp>
+#include <tpc/parser/standard/sign.hpp>
+
+
+namespace tpc {
+  template<
+    typename N,
+    typename
+  >
+  result<N> integral(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    N value;
+    
+    Sign::fn<N> _sign = *(sign<N>(stream));
+    auto first = digit<N>(stream);
+    
+    if (!first)
+      return first;
+    
+    p = first.pos;
+    chk = first.checkpoint;
+    value = _sign(*first);
+    
+    while (parsing) {
+      auto dig = tryP< N, digit<N> >(stream).from(p);
+      
+      p = dig.pos;
+      parsing = bool(dig);
+      
+      if (parsing) {
+        chk = dig.checkpoint;
+        
+        if (   __builtin_mul_overflow(value, 10, &value)            // value *= 10
+            || __builtin_add_overflow(value, _sign(*dig), &value) ) // value += _sign(alg)
+          return result<N>::fail(p); // Fail on overflow. Not considering chk here,
+      }                              // because the whole number is considered
+    }                                // invalid in case of overflow.
+    
+    return result<N>(value, p, chk);
+  }
+}

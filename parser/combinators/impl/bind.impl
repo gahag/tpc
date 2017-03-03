@@ -1,0 +1,78 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+namespace tpc {
+  // bind: Variant for passing the result as a const reference.
+  template<
+    typename From, parser<From> parse,
+    typename To,   result<To> (&f)(const From&)
+  >
+  inline result<To> bind(stream& stream) {
+    auto val = parse(stream);
+    if (!val)
+      return result<To>::fail(val);
+    
+    auto r = f(*val);
+    return r ? r.from(val)
+             : r;
+  }
+  
+  // bind: Variant for passing the result as a rvalue.
+  template<
+    typename From, parser<From> parse,
+    typename To,   result<To> (&f)(From&&)
+  >
+  inline result<To> bind(stream& stream) {
+    auto val = parse(stream);
+    if (!val)
+      return result<To>::fail(val);
+    
+    auto r = f(std::move(*val));
+    return r ? r.from(val)
+             : r;
+  }
+  
+  
+  // bind: Variant for passing the results as const references.
+  template<
+    typename From1, parser<From1> parse1,
+    typename From2, parser<From2> parse2,
+    typename To,    result<To> (&f)(const From1&, const From2&)
+  >
+  inline result<To> bind(stream& stream) {
+    auto val1 = parse1(stream);
+    if (!val1)
+      return result<To>::fail(val1);
+    
+    auto val2 = parse2(stream).from(val1);
+    if (!val2)
+      return result<To>::fail(val2);
+    
+    auto r = f(*val1, *val2);
+    return r ? r.from(val2)
+             : r;
+  }
+  
+  // bind: Variant for passing the results as rvalues.
+  template<
+    typename From1, parser<From1> parse1,
+    typename From2, parser<From2> parse2,
+    typename To,    result<To> (&f)(From1&&, From2&&)
+  >
+  inline result<To> bind(stream& stream) {
+    auto val1 = parse1(stream);
+    if (!val1)
+      return result<To>(val1);
+    
+    auto val2 = parse2(stream).from(val1);
+    if (!val2)
+      return result<To>::fail(val2);
+    
+    auto r = f(std::move(*val1), std::move(*val2));
+    return r ? r.from(val2)
+             : r;
+  }
+}

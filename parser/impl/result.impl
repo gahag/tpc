@@ -1,0 +1,119 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <algorithm>
+#include <ios>
+
+
+namespace tpc {
+  template<typename T> // Failure.
+  result<T>::result(const position& pos, const std::streampos& checkpoint)
+  : pos(pos), checkpoint(checkpoint)
+  { }
+  
+  template<typename T> // Success.
+  result<T>::result(const T& value, const position& pos, const std::streampos& checkpoint)
+  : value(value), pos(pos), checkpoint(checkpoint)
+  { }
+  
+  template<typename T> // Success.
+  result<T>::result(T&& value, const position& pos, const std::streampos& checkpoint)
+  : value(std::move(value)), pos(pos), checkpoint(checkpoint)
+  { }
+  
+  
+  // from(const result<U>&): Sums `pos` from the supplied result, indicating
+  // it was the result produced by the previous parser.
+  // Also assigns `checkpoint` to max(this, last), to ensure it indicates
+  // the stream position of the last succeeded parser.
+  template<typename T>
+  template<typename U>
+  inline result<T>& result<T>::from(const result<U>& last) {
+    this->pos = last.pos + this->pos;
+    this->checkpoint = std::max(this->checkpoint, last.checkpoint);
+    return *this;
+  }
+  
+  // from(const position&): Sums `pos` from the supplied position, indicating
+  // it was the position produced by the previous parser.
+  template<typename T>
+  inline result<T>& result<T>::from(const position& p) {
+    this->pos = p + this->pos; // Addition is not commutative.
+    return *this;
+  }
+  
+  // advance: Sums `pos` to the supplied position, indicating it was the position
+  // produced by the next parser.
+  template<typename T>
+  inline result<T>& result<T>::advance(const position& p) {
+    this->pos += p; // Addition is not commutative.
+    return *this;
+  }
+  
+  
+  // fail(const position& p = { 1, 1 }, const std::streampos& c = 0):
+  // Returns a result indicating failure, relative to the supplied position
+  // and checkpoint. Equivalent to `result<T>(p, c)`.
+  template<typename T>
+  inline result<T> result<T>::fail(const position& p, const std::streampos& c) {
+    return result<T>(p, c);
+  }
+  
+  // fail(const result<U>& r): Returns a result indicating failure, relative to the
+  // supplied result. Equivalent to `result<T>::fail(r.pos, r.checkpoint)`.
+  template<typename T>
+  template<typename U>
+  inline result<T> result<T>::fail(const result<U>& r) {
+    return result<T>::fail(r.pos, r.checkpoint);
+  }
+  
+  
+  // operator bool() const: Returns wether this result indicates success (true)
+  // or failure (false).
+  template<typename T>
+  constexpr inline result<T>::operator bool() const {
+    return bool(value);
+  }
+  
+  // operator->(): Access to the contained value.
+  // Precondition: this result indicates success.
+  // const overload: Const access.
+  // Equivalent to `&(*value)`.
+  template<typename T>
+  constexpr inline const T* result<T>::operator->() const {
+    return &(*value);
+  }
+  
+  template<typename T>
+  constexpr inline T* result<T>::operator->() {
+    return &(*value);
+  }
+  
+  // operator*(): Access to the contained value.
+  // Precondition: this result indicates success.
+  // const overloads: Const access.
+  // && overloads: rvalue access.
+  // Equivalent to `*value`.
+  template<typename T>
+  constexpr inline const T& result<T>::operator*() const & {
+    return *value;
+  }
+  
+  template<typename T>
+  constexpr inline T& result<T>::operator*() & {
+    return *value;
+  }
+  
+  template<typename T>
+  constexpr inline const T&& result<T>::operator*() const && {
+    return std::move(*value);
+  }
+  
+  template<typename T>
+  constexpr inline T&& result<T>::operator*() && {
+    return std::move(*value);
+  }
+}

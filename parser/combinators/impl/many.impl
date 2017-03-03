@@ -1,0 +1,99 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/util/functional.hpp>
+
+#include <tpc/parser/base.hpp>
+#include <tpc/parser/container.hpp>
+#include <tpc/parser/combinators/try.hpp>
+
+
+namespace tpc {
+  using Util::Functional::void_t;
+  
+  
+  template<
+    typename Container, parser< value_type<Container> > parse,
+    typename
+  >
+  inline result<Container> many(Container&& container, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<value_type<Container>, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        container.push_back(std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<Container>(std::move(container), p, chk);
+  }
+  
+  template<
+    typename Container, parser< value_type<Container> > parse,
+    typename
+  >
+  inline result<Container> many(stream& stream) {
+    return many<Container, parse>(Container(), stream);
+  }
+  
+  
+  template<
+    typename Container, parser< value_type<Container> > parse,
+    typename
+  >
+  inline result<Container> many1(stream& stream) {
+    auto first = parse(stream);
+    
+    if (!first)
+      return result<Container>::fail(first);
+    
+    Container container;
+    container.push_back(std::move(*first));
+    
+    return many<Container, parse>(
+      std::move(container), stream
+    ).from(first);
+  }
+  
+  
+  
+  template<
+    typename T, parser<T> parse
+  >
+  inline result<void_t> ignoreMany1(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    auto first = parse(stream);
+    if (!first)
+      return result<void_t>::fail(first);
+    
+    p = first.pos;
+    chk = first.checkpoint;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      p = val.pos;
+      parsing = bool(val);
+      
+      if (parsing)
+        chk = val.checkpoint;
+    }
+    
+    return result<void_t>(Util::Functional::unit, p, chk);
+  }
+}

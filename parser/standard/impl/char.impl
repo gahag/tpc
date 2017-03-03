@@ -1,0 +1,38 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <locale>
+
+namespace tpc {
+  template<typename Predicate>
+  inline result<char> character(stream& stream, Predicate predicate) {
+    const char c = stream.get();
+    
+    return predicate(c) ? result<char>(
+                            c,
+                            c == Char::LineFeed ? position { 2, 1 }
+                                                : position { 1, 2 },
+                            stream.tellg()
+                          )
+                        : result<char>();
+  }
+  
+  template<bool (&predicate)(char)>
+  inline result<char> character(stream& stream) {
+    return character(stream, predicate);
+  }
+  
+  
+  inline result<char> numpunct(stream& stream) {
+    const char point =
+      std::use_facet< std::numpunct<char> >(stream.getloc()).decimal_point();
+    
+    return character(
+      stream,
+      [point](char c) { return c == point; }
+    );
+  }
+}

@@ -1,0 +1,34 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/parser/combinators/try.hpp>
+
+
+namespace tpc {
+  template<
+    typename T, parser<T> p1
+              , parser<T> p2
+  >
+  inline result<T> orP(stream& stream) {
+    auto v = tryP<T, p1>(stream);
+    
+    return v ? v
+             : tryP<T, p2>(stream);
+  }
+  
+  template<
+    typename T, parser<T> p1
+              , parser<T> p2
+              , parser<T> p3
+              , parser<T>... ps
+  >
+  inline result<T> orP(stream& stream) {
+    auto v = tryP<T, p1>(stream);
+    
+    return v ? v
+             : orP<T, p2, p3, ps...>(stream);
+  }
+}

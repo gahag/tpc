@@ -1,0 +1,467 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/util/functional.hpp>
+
+
+namespace tpc {
+  // 2 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    
+    typename R, R (&f)(const _1&, const _2&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    
+    return result<R>(f(*v1, *v2)).from(v2);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    
+    typename R, R (&f)(_1&&, _2&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    
+    return result<R>(f(std::move(*v1), std::move(*v2))).from(v2);
+  }
+  
+  // 3 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    
+    typename R, R (&f)(const _1&, const _2&, const _3&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    
+    return result<R>(f(*v1, *v2, *v3)).from(v3);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    
+    typename R, R (&f)(_1&&, _2&&, _3&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    
+    return result<R>(
+      f(std::move(*v1), std::move(*v2), std::move(*v3))
+    ).from(v3);
+  }
+  
+  // 4 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    
+    typename R, R (&f)(const _1&, const _2&, const _3&, const _4&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    
+    return result<R>(f(*v1, *v2, *v3, *v4)).from(v4);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    
+    typename R, R (&f)(_1&&, _2&&, _3&&, _4&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    
+    return result<R>(
+      f(std::move(*v1), std::move(*v2), std::move(*v3), std::move(*v4))
+    ).from(v4);
+  }
+  
+  // 5 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    
+    typename R, R (&f)(const _1&, const _2&, const _3&, const _4&, const _5&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    
+    return result<R>(f(*v1, *v2, *v3, *v4, *v5)).from(v5);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    
+    typename R, R (&f)(_1&&, _2&&, _3&&, _4&&, _5&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    
+    return result<R>(
+      f(std::move(*v1), std::move(*v2), std::move(*v3), std::move(*v4), std::move(*v5))
+    ).from(v5);
+  }
+  
+  // 6 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    typename _6, parser<_6> parse6,
+    
+    typename R, R (&f)(const _1&, const _2&, const _3&, const _4&, const _5&, const _6&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    auto v6 = parse6(stream).from(v5);
+    if (!v6)
+      return result<R>::fail(v6);
+    
+    
+    return result<R>(f(*v1, *v2, *v3, *v4, *v5, *v6)).from(v6);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    typename _6, parser<_6> parse6,
+    
+    typename R, R (&f)(_1&&, _2&&, _3&&, _4&&, _5&&, _6&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    auto v6 = parse6(stream).from(v5);
+    if (!v6)
+      return result<R>::fail(v6);
+    
+    
+    return result<R>(
+      f(std::move(*v1), std::move(*v2), std::move(*v3),
+        std::move(*v4), std::move(*v5), std::move(*v6))
+    ).from(v6);
+  }
+  
+  // 7 -------------------------------------------
+  template< // By const reference.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    typename _6, parser<_6> parse6,
+    typename _7, parser<_7> parse7,
+    
+    typename R, R (&f)(
+      const _1&, const _2&, const _3&,
+      const _4&, const _5&, const _6&, const _7&
+    )
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    auto v6 = parse6(stream).from(v5);
+    if (!v6)
+      return result<R>::fail(v6);
+    
+    auto v7 = parse7(stream).from(v6);
+    if (!v7)
+      return result<R>::fail(v7);
+    
+    
+    return result<R>(f(*v1, *v2, *v3, *v4, *v5, *v6, *v7)).from(v7);
+  }
+  
+  template< // By rvalue.
+    typename _1, parser<_1> parse1,
+    typename _2, parser<_2> parse2,
+    typename _3, parser<_3> parse3,
+    typename _4, parser<_4> parse4,
+    typename _5, parser<_5> parse5,
+    typename _6, parser<_6> parse6,
+    typename _7, parser<_7> parse7,
+    
+    typename R, R (&f)(_1&&, _2&&, _3&&, _4&&, _5&&, _6&&, _7&&)
+  >
+  result<R> join(stream& stream) {
+    auto v1 = parse1(stream);
+    if (!v1)
+      return result<R>::fail(v1);
+    
+    auto v2 = parse2(stream).from(v1);
+    if (!v2)
+      return result<R>::fail(v2);
+    
+    auto v3 = parse3(stream).from(v2);
+    if (!v3)
+      return result<R>::fail(v3);
+    
+    auto v4 = parse4(stream).from(v3);
+    if (!v4)
+      return result<R>::fail(v4);
+    
+    auto v5 = parse5(stream).from(v4);
+    if (!v5)
+      return result<R>::fail(v5);
+    
+    auto v6 = parse6(stream).from(v5);
+    if (!v6)
+      return result<R>::fail(v6);
+    
+    auto v7 = parse7(stream).from(v6);
+    if (!v7)
+      return result<R>::fail(v7);
+    
+    
+    return result<R>(
+      f(std::move(*v1), std::move(*v2), std::move(*v3),
+        std::move(*v4), std::move(*v5), std::move(*v6), std::move(*v7))
+    ).from(v7);
+  }
+  
+  // ---------------------------------------------
+  
+  template<
+    typename T, parser<T> parse1,
+    typename U, parser<U> parse2
+  >
+  inline result<T> first(stream& stream) {
+    return join< T, parse1,
+                 U, parse2,
+                 T, Util::Functional::fst<T, U> >(stream);
+  }
+  
+  template<
+    typename T, parser<T> parse1,
+    typename U, parser<U> parse2
+  >
+  inline result<U> second(stream& stream) {
+    return join< T, parse1,
+                 U, parse2,
+                 U, Util::Functional::snd<T, U> >(stream);
+  }
+  
+  template<
+    typename T, parser<T> parse1,
+    typename U, parser<U> parse2,
+    typename V, parser<V> parse3
+  >
+  inline result<T> first(stream& stream) {
+    return join< T, parse1,
+                 U, parse2,
+                 V, parse3,
+                 T, Util::Functional::fst<T, U, V> >(stream);
+  }
+  
+  template<
+    typename T, parser<T> parse1,
+    typename U, parser<U> parse2,
+    typename V, parser<V> parse3
+  >
+  inline result<U> second(stream& stream) {
+    return join< T, parse1,
+                 U, parse2,
+                 V, parse3,
+                 U, Util::Functional::snd<T, U, V> >(stream);
+  }
+  
+  template<
+    typename T, parser<T> parse1,
+    typename U, parser<U> parse2,
+    typename V, parser<V> parse3
+  >
+  inline result<V> third(stream& stream) {
+    return join< T, parse1,
+                 U, parse2,
+                 V, parse3,
+                 V, Util::Functional::trd<T, U, V> >(stream);
+  }
+}

@@ -1,0 +1,1286 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/parser/base.hpp>
+#include <tpc/parser/container.hpp>
+#include <tpc/parser/combinators/try.hpp>
+
+
+namespace tpc {
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    U (&f)(U, T)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    U (&f)(const U&, const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    U (&f)(U&&, T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(std::move(r), std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (&f)(U&, T)
+  >
+  inline result<U> fold(stream& stream)  {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (&f)(U&, const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (&f)(U&, T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (U::*f)(T)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (U::*f)(const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U value,
+    void (U::*f)(T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = value;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    U (&f)(U, T)
+  >
+  inline result<U> fold(stream& stream)  {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    U (&f)(const U&, const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    U (&f)(U&&, T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        r = f(std::move(r), std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (&f)(U&, T)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (&f)(U&, const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (&f)(U&, T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(r, std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (U::*f)(T)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (U::*f)(const T&)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&gen)(),
+    void (U::*f)(T&&)
+  >
+  inline result<U> fold(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    U r = gen();
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (r.*f)(std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(r), p, chk);
+  }
+  
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(U, T)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        _seed = f(_seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(const U&, const T&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        _seed = f(_seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(U&&, T&&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        _seed = f(std::move(_seed), std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, T)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(_seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, const T&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(_seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, T&&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(_seed, std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(T)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (_seed.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(const T&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (_seed.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(T&&)
+  >
+  inline result<U> fold(const U& seed, stream& stream) {
+    U _seed(seed);
+    
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (_seed.*f)(std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(_seed), p, chk);
+  }
+  
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(U, T)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        seed = f(seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(const U&, const T&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        seed = f(seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, U (&f)(U&&, T&&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        seed = f(std::move(seed), std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, T)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, const T&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(seed, *val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (&f)(U&, T&&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        f(seed, std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(T)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (seed.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(const T&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (seed.*f)(*val);
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    typename U, void (U::*f)(T&&)
+  >
+  inline result<U> fold(U&& seed, stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    position p;
+    std::streampos chk;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(p);
+      
+      parsing = bool(val);
+      
+      p = val.pos;
+      
+      if (parsing) {
+        (seed.*f)(std::move(*val));
+        chk = val.checkpoint;
+      }
+    }
+    
+    return result<U>(std::move(seed), p, chk);
+  }
+  
+  
+  
+  // fold1:
+  
+  template<
+    typename T, parser<T> parse,
+    T (&f)(T, T)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        *val1 = f(*val1, *val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    T (&f)(const T&, const T&)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        *val1 = f(*val1, *val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    T (&f)(T&&, T&&)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        *val1 = f(std::move(*val1), std::move(*val));
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    void (&f)(T&, T)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        f(*val1, *val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    void (&f)(T&, const T&)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        f(*val1, *val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    void (&f)(T&, T&&)
+  >
+  inline result<T> fold1(stream& stream) {
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        f(*val1, std::move(*val));
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  
+  template<
+    typename T, parser<T> parse,
+    void (T::*f)(T)
+  >
+  inline result<T> fold1(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        ((*val1).*f)(*val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    void (T::*f)(const T&)
+  >
+  inline result<T> fold1(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        ((*val1).*f)(*val);
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+  
+  template<
+    typename T, parser<T> parse,
+    void (T::*f)(T&&)
+  >
+  inline result<T> fold1(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for fold's function parameter");
+    
+    bool parsing = true;
+    
+    auto val1 = tryP<T, parse>(stream);
+    
+    if (!val1)
+      return val1;
+    
+    while (parsing) {
+      auto val = tryP<T, parse>(stream).from(val1);
+      
+      parsing = bool(val);
+      
+      val1.pos = val.pos;
+      
+      if (parsing) {
+        ((*val1).*f)(std::move(*val));
+        val1.checkpoint = val.checkpoint;
+      }
+    }
+    
+    return val1;
+  }
+}

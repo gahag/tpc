@@ -1,0 +1,34 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <tpc/util/functional.hpp>
+
+#include <tpc/parser/combinators/consumption.hpp>
+
+
+namespace tpc {
+  using void_t = Util::Functional::void_t;
+  
+  
+  template<
+    typename N,
+    N (&stoN)(const std::string&, std::size_t*),
+    typename
+  >
+  result<N> ffloating(stream& stream) {
+    auto r = consumption<void_t, skipFloating>(stream);
+    
+    if (!r)
+      return result<N>::fail(r);
+    
+    try {
+      return result<N>(stoN(*r, nullptr)).from(r);
+    }
+    catch(const std::exception&) {
+      return result<N>::fail(r);
+    }
+  }
+}

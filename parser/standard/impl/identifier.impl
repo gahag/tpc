@@ -1,0 +1,35 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <string>
+
+#include <tpc/parser/combinators/many.hpp>
+#include <tpc/parser/combinators/try.hpp>
+#include <tpc/parser/standard/char.hpp>
+
+
+namespace tpc {
+  template<
+    bool (&isIdentStart)(char),
+    bool (&isIdentifier)(char)
+  >
+  inline result<std::string> identifier(stream& stream) {
+    auto first = tryP< char, character<isIdentStart> >(stream);
+    
+    if (!first)
+      return result<std::string>::fail(first);
+    
+    return many< std::string, character<isIdentifier> >(
+      std::string { *first },
+      stream
+    ).from(first);
+  }
+  
+  template<bool (&isIdentifier)(char)>
+  inline result<std::string> identifier(stream& stream) {
+    return many1< std::string, character<isIdentifier> >(stream);
+  }
+}

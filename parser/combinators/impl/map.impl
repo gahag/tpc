@@ -1,0 +1,89 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+namespace tpc {
+  // By value
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (&f)(From)
+  >
+  inline result<To> map(stream& stream) {
+    auto r = parse(stream);
+    
+    return r ? result<To>(f(*r)).from(r)
+             : result<To>::fail(r);
+  }
+  
+  // By const reference.
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (&f)(const From&)
+  >
+  inline result<To> map(stream& stream) {
+    auto r = parse(stream);
+    
+    return r ? result<To>(f(*r)).from(r)
+             : result<To>::fail(r);
+  }
+  
+  // By rvalue.
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (&f)(From&&)
+  >
+  inline result<To> map(stream& stream) {
+    auto r = parse(stream);
+    
+    return r ? result<To>(f(std::move(*r))).from(r)
+             : result<To>::fail(r);
+  }
+  
+  
+  // Map using pointer to cv/ref-unqualified member function.
+  // The function pointer must point to a valid function.
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (From::*f)()
+  >
+  inline result<To> map(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for map's function parameter");
+    
+    auto r = parse(stream);
+    
+    return f && r ? result<To>( ((*r).*f)() ).from(r)
+                  : result<To>::fail(r);
+  }
+  
+  // Map using pointer to rvalue qualified member function.
+  // The function pointer must point to a valid function.
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (From::*f)() &&
+  >
+  inline result<To> map(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for map's function parameter");
+    
+    auto r = parse(stream);
+    
+    return f && r ? result<To>( ((*r).*f)() ).from(r)
+                  : result<To>::fail(r);
+  }
+  
+  // Map using pointer to const qualified member function.
+  // The function pointer must point to a valid function.
+  template<
+    typename From, parser<From> parse,
+    typename To,   To (From::*f)() const
+  >
+  inline result<To> map(stream& stream) {
+    static_assert(f != nullptr, "nullptr not allowed for map's function parameter");
+    
+    auto r = parse(stream);
+    
+    return f && r ? result<To>( ((*r).*f)() ).from(r)
+                  : result<To>::fail(r);
+  }
+}

@@ -1,0 +1,47 @@
+// Copyright (C) 2017 gahag
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms
+// of the BSD license. See the LICENSE file for details.
+
+#include <ios>
+
+#include <tpc/parser/standard/char.hpp>
+
+
+namespace tpc {
+  template<
+    typename T, T (&generator)(),
+    std::size_t count
+  >
+  inline result<T> consume(stream& stream) {
+    position p;
+    std::streampos chk;
+    
+    for (std::size_t i = 0; i < count; i++) {
+      auto r = any(stream).from(p);
+      
+      p = r.pos;
+      
+      if (r)
+        chk = r.checkpoint;
+      else
+        return result<T>::fail(r);
+    }
+    
+    return result<T>(generator(), p, chk);
+  }
+  
+  template<
+    typename T, T value,
+    std::size_t count
+  >
+  inline result<T> consume(stream& stream) {
+    return consume<T, Util::Functional::cons<T, value>, count>(stream);
+  }
+  
+  template<std::size_t count>
+  inline result<void_t> consume(stream& stream) {
+    return consume<void_t, Util::Functional::unit, count>(stream);
+  }
+}
