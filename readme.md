@@ -16,7 +16,7 @@ TPC is a header only library. It uses some features of the C++ 17 language stand
 
 For more detailed information on how to use TPC, see [Basic tutorial](#basic-tutorial) and [Examples](#examples).
 
-For more technical information on compiling with TPC, see [Technical information](#technical-Information).
+For more technical information on compiling with TPC, see [Technical information](#technical-information).
 
 
 ## Basic tutorial
@@ -41,7 +41,7 @@ It has `operator bool()`, `operator ->()` and `operator *()`, so the usage is si
 
 Examples on using `tpc::result<T>` can be found at [Inspecting the result](#inspecting-the-result).
 
-More details on members and methods of the `tpc::result<T>` type can be found at its documentation, [result.hpp](parser/result.hpp).
+More details on members and methods of the result type can be found at its documentation, [result.hpp](parser/result.hpp).
 
 ### The stream type
 
@@ -53,15 +53,17 @@ A parser might be declared in two ways, considering it is a reference to a funct
 * A function of type `tpc::result<T> (tpc::stream&)`
 * A constexpr `tpc::parser<T>` value.
 
-Examples of how to declare a parser can be found at [Declaring a parser](#declaring-a-parser-2).
+Examples of how to declare a parser can be found at [Declaring a parser](#declaring-a-parser-1).
 
 ### Applying a parser
 
-To apply a parser, just do the function call supplying the stream of characters. The resulting value or parse error is the value returned by the function call. Examples of how to use a parser can be found at [Applying a parser](#applying-a-parser-2).
+To apply a parser, just do the function call supplying the stream of characters. The resulting value or parse error is the value returned by the function call. Examples of how to use a parser can be found at [Applying a parser](#applying-a-parser-1).
 
 ### Modules
 
-TPC is organized into modules. That means one can _#include_ just what is needed, without having to _#include_ the whole library. The parser combinators can be found under `tpc/parser/combinators`. The standard parsers can be found under `tpc/parser/standard`. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`. For more detailed information on modules, see [Modules](#modules).
+TPC is organized into modules. That means one can _#include_ just what is needed, without having to _#include_ the whole library.  
+The parser combinators can be found under `tpc/parser/combinators`. The standard parsers can be found under `tpc/parser/standard`. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`.  
+For more detailed information on modules, see [Modules](#modules-1).
 
 
 ## Examples
@@ -131,12 +133,12 @@ A list of these examples contains:
 
 ## Modules
 
-TPC is organized into modules. One can _#include_ just what is desired. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`.
+TPC is organized into modules. One can _#include_ just what is desired. If for some reason you wish to include everything, just `#include <tpc/library.hpp>`.  
 Each module is a header file. For the between combinator, the header file is `tpc/parser/combinators/between.hpp`. For the digit parser, the header file is `tpc/parser/standard/digit.hpp`.
 
 ### List of modules
 
-Parser combinators, located under `tpc/parser/combinators/`:
+Parser combinators, located under `tpc/parser/combinators/` :
 * between
 * bind
 * consumption
@@ -160,7 +162,7 @@ Parser combinators, located under `tpc/parser/combinators/`:
 * sependby
 * try
 
-Standard parsers, found under `tpc/parser/standard/`:
+Standard parsers, found under `tpc/parser/standard/` :
 * char
 * consume
 * digit
@@ -179,17 +181,21 @@ TPC is documented with comments adjacent to parser definitions and function prot
 
 ## Technical information
 
-TPC is a header only library, due to the heavy use of templates to combine parsers. TPC uses some of the C++ 17 features, such as using constexpr references as a non-type template parameters, `std::disjunction`, etc. Currently, both gcc 6.3 and clang 3.9 were tested and are able to compile TPC with the flag -std=c++1z. Previous versions supporting c++1z are probably able to compile TPC as well.
+TPC is a header only library, due to the heavy use of templates to combine parsers.  
+TPC uses some of the C++ 17 features, such as using constexpr references as a non-type template parameters, `std::disjunction`, etc.  
+Currently, both gcc 6.3 and clang 3.9 were tested and are able to compile TPC with the flag `-std=c++1z`. Previous versions supporting `c++1z` are probably able to compile TPC as well.
 
 TPC requires the `tpc` directory to be in the compiler's include path.
 
 ## Contributions
 
-Contributions to TPC are welcome. If you find a bug, or have any kind of suggestion, please report in or send a pull request.
+Contributions to TPC are welcome.  
+If you find a bug, or have any kind of suggestion, please report in or send a pull request.
 
 ## License
 
-Copyright (C) 2017 gahag
+Copyright (C) 2017 gahag  
 All rights reserved.
 
-This software may be modified and distributed under the terms of the BSD license. See the [LICENSE](LICENSE.txt) file for details.
+This software may be modified and distributed under the terms of the BSD license.  
+See the [LICENSE](LICENSE.txt) file for details.
