@@ -95,7 +95,7 @@ constexpr tpc::parser<int> a_int_between_parens = tpc::parens< int, tpc::number<
 #include <sstream>
 #include <string>
 ```
-```
+```c++
 std::string str;
 std::getline(std::cin, str);      // capture a line from std::cin
 std::stringstream my_stream(str); // create a string stream from that line
