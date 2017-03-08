@@ -38,6 +38,7 @@ The result type indicates either failure or success. It contains three relevant 
 
 The result type is projected to behave like a `std::optional<T>`.  
 It has `operator bool()`, `operator ->()` and `operator *()`, so the usage is similar to `std::optional<T>`.
+The documentation of `std::optional<T>` can be found [here](http://en.cppreference.com/w/cpp/utility/optional).
 
 Examples on using `tpc::result<T>` can be found at [Inspecting the result](#inspecting-the-result).
 
@@ -93,7 +94,8 @@ constexpr tpc::parser<int> a_int_between_parens = tpc::parens< int, tpc::number<
 #include <iostream>
 #include <sstream>
 #include <string>
-
+```
+```
 std::string str;
 std::getline(std::cin, str);      // capture a line from std::cin
 std::stringstream my_stream(str); // create a string stream from that line
