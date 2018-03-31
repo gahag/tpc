@@ -17,15 +17,15 @@
 namespace tpc {
   // parens: Parses something between parentheses.
   // Parses an opening parenthesis, skips whitespace,
-  // executes the supplied parser, skips whitespace,
-  // parse a closing parenthesis.
+  // executes the supplied parser, parse a closing parenthesis,
+  // and finally skips whitespace.
   // If any of the parsers above fails, returns failure.
   // Otherwise, returns the result produced by the supplied parser.
   template<
     typename T, parser<T> parse
   >
   constexpr parser<T> parens = between< char, lexeme<char, openParen>
-                                            , input<char, closeParen>,
+                                            , lexeme<char, closeParen>,
                                         T,    parse                   >;
 }
 

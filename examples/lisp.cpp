@@ -41,13 +41,11 @@ namespace lisp {
   
   template<typename N>
   tpc::result<N> parse(tpc::stream& stream) {
-    constexpr tpc::parser<char> op = tpc::lexeme< char, tpc::character<is_operator> >;
-  
-    constexpr tpc::parser<N> expr = tpc::lexeme<
-      N, tpc::parens< N, tpc::join< char, op,
-                                    N,    parse<N>,
-                                    N,    parse<N>,
-                                    N,    operation<N> > >
+    constexpr tpc::parser<N> expr = tpc::parens<
+      N, tpc::join< char, tpc::lexeme< char, tpc::character<is_operator> >,
+                    N,    parse<N>,
+                    N,    parse<N>,
+                    N,    operation<N> >
     >;
     
     return tpc::orP< N, tpc::lexeme< N, tpc::number<N> >
