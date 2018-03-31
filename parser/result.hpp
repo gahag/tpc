@@ -7,8 +7,7 @@
 #ifndef __TPC_PARSER_RESULT_HPP__
 #define __TPC_PARSER_RESULT_HPP__
 
-// TODO: Change `<experimental/optional>` with `<optional>` when c++17 is available.
-#include <experimental/optional>
+#include <optional>
 
 #include <tpc/util/traits.hpp>
 
@@ -40,7 +39,7 @@ namespace tpc {
   template<typename T>
   class result<T> {
   public:
-    std::experimental::optional<T> value; // Potentially parsed value.
+    std::optional<T> value; // Potentially parsed value.
     
     position pos; // Position (line, column) where the parser stopped.
     
